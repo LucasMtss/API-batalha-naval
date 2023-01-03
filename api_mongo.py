@@ -20,7 +20,8 @@ def create_room():
     "jogador_dois": None,
     "tabuleiro_jogador_um": None,
     "tabuleiro_jogador_dois": None,
-    "placar": None
+    "placar": None,
+    "pode_iniciar": False
   }
   return mongo.db.salas.insert_one(room).inserted_id
 
@@ -49,7 +50,8 @@ def creatRoomAndInsertPlayer(userId):
     "jogador_dois": None,
     "tabuleiro_jogador_um": None,
     "tabuleiro_jogador_dois": None,
-    "placar": None
+    "placar": None,
+    "pode_iniciar": False
   }
   update_room(roomId, roomData)
   return getRoomData(roomId)
@@ -73,7 +75,8 @@ def insertPlayerInRoom(room, userId):
     "jogador_dois": getIdOfPlayer(room['jogador_dois']),
     "tabuleiro_jogador_um": room['tabuleiro_jogador_um'],
     "tabuleiro_jogador_dois": room['tabuleiro_jogador_dois'],
-    "placar": room['placar']
+    "placar": room['placar'],
+    "pode_iniciar": False
   }
   update_room(room['_id']['$oid'], roomData)
   return getRoomData(room['_id']['$oid'])
@@ -125,7 +128,8 @@ def initGame(room):
     "jogador_dois": getIdOfPlayer(room['jogador_dois']),
     "tabuleiro_jogador_um": battleshipPlayerOne,
     "tabuleiro_jogador_dois": battleshipPlayerTwo,
-    "placar": score
+    "placar": score,
+    "pode_iniciar": True,
   }
 
   response = update_room(room['_id']['$oid'], roomData)
@@ -136,7 +140,6 @@ def initGame(room):
 def getRoomData(roomId):
   response = mongo.db.salas.find_one({'_id': ObjectId(roomId)})
   roomData = json.loads(json_util.dumps(response))
-  print("\n\nROOM DATA", roomData, "\n\n")
   roomData['jogador_um'] = getUserData(getIdOfPlayer(roomData['jogador_um']))
   roomData['jogador_dois'] = getUserData(getIdOfPlayer(roomData['jogador_dois']))
   return roomData
